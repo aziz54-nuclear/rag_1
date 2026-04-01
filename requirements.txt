@@ -1,0 +1,7 @@
+# Core dependencies
+numpy
+scikit-learn
+sentence-transformers
+
+# Optional: only needed if you use ANTHROPIC_API_KEY in query_parser.py
+anthropic

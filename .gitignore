@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.python-version
+
+# Local archives and databases
+file.zip
+products.db

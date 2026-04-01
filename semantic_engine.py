@@ -25,6 +25,15 @@ print("[Semantic] Model loaded successfully.")
 DIMS = 384   # all-MiniLM-L6-v2 output dimension
 
 
+def _encode(text_or_texts):
+    """Compatibility wrapper for sentence-transformers encode kwargs across versions."""
+    try:
+        return MODEL.encode(text_or_texts, convert_to_numpy=True, show_progress_bar=False)
+    except TypeError:
+        # Older/newer variants may expose a different progress keyword.
+        return MODEL.encode(text_or_texts, convert_to_numpy=True)
+
+
 def embed(text: str) -> np.ndarray:
     """
     Produce a 384-dim L2-normalized embedding using all-MiniLM-L6-v2.
@@ -37,8 +46,8 @@ def embed(text: str) -> np.ndarray:
     """
     if not text or not text.strip():
         return np.zeros(DIMS)
-    
-    embedding = MODEL.encode(text, convert_to_numpy=True, show_progress=False)
+
+    embedding = _encode(text)
     return embedding
 
 
@@ -70,7 +79,7 @@ class SemanticEngine:
         self.products = products
         # Build text for all products, then batch encode for efficiency
         texts = [self._build_text(p) for p in products]
-        self.embeddings = MODEL.encode(texts, convert_to_numpy=True, show_progress=False)
+        self.embeddings = _encode(texts)
         print(f"[Semantic] Fitted. {len(products)} embeddings of {DIMS} dims each.")
 
     def query(self, query_text: str, top_k: int = 5) -> list[dict]:
